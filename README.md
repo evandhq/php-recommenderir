@@ -3,19 +3,19 @@ A simple Object Oriented wrapper for [Recommender.ir](http://recommender.ir/) AP
 
 ## Installation
 ```
-    compsoer require evandhq/php-recommenderir
+compsoer require evandhq/php-recommenderir
 ```
 or add this line to your composer.json file
 ```
-    "evandhq/php-recommenderir" : "dev-master"
+"evandhq/php-recommenderir" : "dev-master"
 ```
 
 ## Basic usage
 ```
-    require_once 'vendor/autoload.php';
-    
-    $client = new Evand\Recommenderir\Client();
-    $client->ingest(12345, 'product1', 200);
+require_once 'vendor/autoload.php';
+
+$client = new Evand\Recommenderir\Client(['base_uri' => 'http://185.83.114.53:8082']);
+$client->ingest(12345, 'product1', 200);
 ```
 
 ## Available methods
