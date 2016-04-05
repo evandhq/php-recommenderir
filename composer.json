@@ -1,0 +1,27 @@
+{
+    "name": "evandhq/php-recommenderir",
+    "type": "library",
+    "description": "Recommender.ir API PHP client",
+    "homepage": "https://github.com/evandhq/php-recommenderir",
+    "keywords": ["recommender", "api", "gist", "api-wrapper"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evand Team",
+            "homepage": "https://evand.ir"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "ext-curl":        "*",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Evand\\Recommenderir\\": "src/"
+        }
+    }
+}
