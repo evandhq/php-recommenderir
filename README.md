@@ -14,7 +14,7 @@ or add this line to your composer.json file
 ```
 require_once 'vendor/autoload.php';
 
-$client = new Evand\Recommenderir\Client(['base_uri' => 'http://185.83.114.53:8082']);
+$client = new Evand\Recommenderir\Client(['base_uri' => 'http://example.com']);
 $client->ingest(12345, 'product1', 200);
 ```
 

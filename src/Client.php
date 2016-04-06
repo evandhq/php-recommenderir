@@ -18,7 +18,7 @@ class Client
      * @var array
      */
     protected $options = array (
-        'base_uri' => 'http://185.83.114.53:8082',
+        'base_uri' => 'http://example.com',
         'user_agent' => 'php-recommenderir (https://github.com/evandhq/php-recommenderir)',
         'connect_timeout' => 30,
         'timeout' => 30
