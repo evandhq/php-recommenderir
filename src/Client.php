@@ -13,6 +13,7 @@ use InvalidArgumentException;
 class Client
 {
     use Validator;
+    use Helpers;
 
     /**
      * @var array
@@ -150,7 +151,7 @@ class Client
         $this->haveString($item);
 
         try {
-            $this->client->get('/termItemAdd/' . $item . '/' .implode('/', $tags));
+            $this->client->get('/termItemAdd/' . $item . '/' . implode('/', $tags));
         } catch (ClientException $e) {
             return false;
         }
@@ -174,7 +175,7 @@ class Client
         $this->haveString($item);
 
         try {
-            $this->client->get('/termItemRemove/' . $item . '/' .implode('/', $tags));
+            $this->client->get('/termItemRemove/' . $item . '/' . implode('/', $tags));
         } catch (ClientException $e) {
             return false;
         }
@@ -193,35 +194,15 @@ class Client
 
         try {
             $response = $this->client->get('/termItemList/' . $item);
-            $tags = $this->toArray($item, $response->getBody()->getContents());
-            if(empty($tags)) {
+
+            $tags = $this->json_decode_recommender($response->getBody()->getContents());
+            if ($tags === null) {
                 return [];
             }
-
         } catch (ClientException $e) {
             return [];
         }
 
-        return $tags[$item];
-
-    }
-
-    /**
-     * @param $item
-     * @param $string
-     *
-     * @return array
-     */
-    private function toArray($item, $string) {
-
-        if(empty($string) or $string === null) {
-            return [];
-        }
-
-        $array = [];
-        $string = '$array = ' . str_replace("\"$item\":", "\"$item\"=>", $string) . ';';
-        eval($string);
-
-        return $array;
+        return $tags->$item;
     }
 }

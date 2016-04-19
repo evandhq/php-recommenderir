@@ -11,7 +11,7 @@ or add this line to your composer.json file
 ```
 
 ## Basic usage
-```
+```php
 require_once 'vendor/autoload.php';
 
 $client = new Evand\Recommenderir\Client(['base_uri' => 'http://example.com']);
