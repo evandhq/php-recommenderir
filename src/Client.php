@@ -138,9 +138,11 @@ class Client
      * @param       $item
      * @param array $tags
      *
+     * @param bool  $overwrite
+     *
      * @return bool
      */
-    public function addTags($item, array $tags)
+    public function addTags($item, array $tags, $overwrite = false)
     {
 
         if (empty($tags)) {
@@ -151,7 +153,8 @@ class Client
         $this->haveString($item);
 
         try {
-            $this->client->get('/termItemAdd/' . $item . '/' . implode('/', $tags));
+            $overwrite = $overwrite === true ? '?overwrite' : '';
+            $this->client->get('/termItemAdd/' . $item . '/' . implode('/', $tags) . $overwrite);
         } catch (ClientException $e) {
             return false;
         }
