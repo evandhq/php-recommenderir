@@ -12,42 +12,45 @@ trait Validator
 {
 
     /**
-     * @param array $array
-     * @param       $functionName
+     * @param array  $array
+     * @param        $functionName
+     * @param string $key
      *
      * @return bool
      */
-    protected function validateArray(array $array, $functionName)
+    protected function validateArray(array $array, $functionName, $key = 'item')
     {
         foreach ($array as $ar) {
-            $this->{$functionName}($ar);
+            $this->{$functionName}($ar, $key);
         }
         return true;
     }
 
     /**
-     * @param $var
+     * @param        $var
+     * @param string $key
      *
      * @return bool
      */
-    protected function haveString($var)
+    protected function haveString($var, $key = 'item')
     {
         if (!preg_match('/[a-zA-Z]/', $var)) {
-            throw new InvalidArgumentException(key($var).' must be string and contains at least one character!');
+            throw new InvalidArgumentException($key.' must be string and contains at least one character!');
         }
 
         return true;
     }
 
     /**
-     * @param $var
+     * @param        $var
+     * @param string $key
      *
      * @return bool
      */
-    protected function isInt($var)
+    protected function isInt($var, $key = 'item')
     {
-        if (!preg_match('/[0-9]/', $var)) {
-            throw new InvalidArgumentException(key($var).' must be integer!');
+        if (!is_numeric($var)) {
+            throw new InvalidArgumentException($key.' must be integer!');
         }
 
         return true;
