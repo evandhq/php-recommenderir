@@ -20,13 +20,29 @@ $client->ingest(12345, 'product1', 200);
 
 ## Available methods
 
-
 * ingest
 * forgetItems
 * forgetItemsList
 * rememberItems
-* addTags
-* removeTags
-* tagsList
+* addTerms
+* removeTerms
+* termsList
+* recommend
+* recommendToGroup
+* similarity
+* similarityToItem
+* because
+* mostPopularItems
+* termMostPopularItems
+* termSimilarity
+* termBasedRecommend
+* termBasedMostPopularItems
+* termBasedSimilarity
+* termNeighborhood
+* latestTouchedItems
+* latestTouchedTerms
+* userFrequentlyTouchedItems
+* itemFrequentlyVisitors
+* currentMood
 
 Feel free to open an issue and send a pull request. 
