@@ -18,7 +18,7 @@ class Client
     /**
      * @var array
      */
-    protected $options = array (
+    protected $options = array(
         'base_uri' => 'http://example.com',
         'user_agent' => 'php-recommenderir (https://github.com/evandhq/php-recommenderir)',
         'connect_timeout' => 30,
@@ -39,9 +39,9 @@ class Client
     }
 
     /**
-     * @param int    $userId
+     * @param int $userId
      * @param string $item
-     * @param int    $value
+     * @param int $value
      *
      * @return bool
      */
@@ -95,7 +95,7 @@ class Client
     public function forgetItemsList()
     {
         try {
-            $response    = $this->client->get('/forget?list');
+            $response = $this->client->get('/forget?list');
             $itemsString = $response->getBody()->getContents();
 
             if (empty($itemsString)) {
@@ -137,11 +137,12 @@ class Client
     /**
      * @param       $item
      * @param array $terms
-     * @param bool  $overwrite
+     * @param bool $overwrite
      *
+     * @param bool $nocheck
      * @return bool
      */
-    public function addTerms($item, array $terms, $overwrite = false)
+    public function addTerms($item, array $terms, $overwrite = true, $nocheck = true)
     {
 
         if (empty($terms)) {
@@ -152,8 +153,16 @@ class Client
         $this->haveString($item, 'item');
 
         try {
-            $overwrite = $overwrite === true ? '?overwrite' : '';
-            $this->client->get('/termItemAdd/' . $item . '/' . implode('/', $terms) . $overwrite);
+            $queryString = [];
+            if ($overwrite === true) {
+                $queryString['query']['overwrite'] = '';
+            }
+
+            if ($nocheck === true) {
+                $queryString['query']['nocheck'] = '';
+            }
+
+            $this->client->get('/termItemAdd/' . $item . '/' . implode('/', $terms), $queryString);
         } catch (ClientException $e) {
             return false;
         }
@@ -209,8 +218,63 @@ class Client
     }
 
     /**
+     * @param $item
+     * @param array $locations
+     * @param bool $overwrite
+     * @param bool $nocheck
+     * @return bool
+     */
+    public function itemLocationAdd($item, array $locations, $overwrite = true, $nocheck = true)
+    {
+
+        if (empty($locations)) {
+            throw new InvalidArgumentException('locations is empty!');
+        }
+
+        $this->haveString($item, 'item');
+
+        try {
+            $queryString = [];
+            if ($overwrite === true) {
+                $queryString['query']['overwrite'] = '';
+            }
+
+            if ($nocheck === true) {
+                $queryString['query']['nocheck'] = '';
+            }
+
+            $this->client->get('/itemLocationAdd/' . $item . '/' . implode('/', $locations), $queryString);
+        } catch (ClientException $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $item
+     * @return array
+     */
+    public function itemLocationList($item)
+    {
+        $this->haveString($item, 'item');
+
+        try {
+            $response = $this->client->get('/itemLocationList/' . $item);
+            $terms = $this->json_decode_recommender($response->getBody()->getContents());
+            if ($terms === null) {
+                return [];
+            }
+        } catch (ClientException $e) {
+            return [];
+        }
+
+        return $terms->$item;
+    }
+
+    /**
      * @param            $userId
-     * @param null       $howMany
+     * @param null $howMany
      * @param bool|false $dither
      *
      * @return array|mixed
@@ -238,8 +302,92 @@ class Client
     }
 
     /**
-     * @param array      $userIds
-     * @param null       $howMany
+     * @param $userId
+     * @param null $howMany
+     * @param bool $fresh
+     * @return array|mixed
+     */
+    public function termRecommend($userId, $howMany = null, $fresh = false)
+    {
+        $this->isInt($userId, 'userId');
+
+        try {
+
+            $queryString = [];
+            if (is_numeric($howMany) and $howMany > 0) {
+                $queryString['query']['howMany'] = $howMany;
+            }
+
+            if ($fresh === true) {
+                $queryString['query']['fresh'] = '';
+            }
+
+            $response = $this->client->get('/termRecommend/' . $userId, $queryString);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @param $userId
+     * @param null $howMany
+     * @param bool $fresh
+     * @return array|mixed
+     */
+    public function spectrometer($userId, $howMany = null, $fresh = false)
+    {
+        $this->isInt($userId, 'userId');
+
+        try {
+
+            $queryString = [];
+            if (is_numeric($howMany) and $howMany > 0) {
+                $queryString['query']['howMany'] = $howMany;
+            }
+
+            if ($fresh === true) {
+                $queryString['query']['fresh'] = '';
+            }
+
+            $response = $this->client->get('/spectrometer/' . $userId, $queryString);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @param $userId
+     * @param null $howMany
+     * @param bool $fresh
+     * @return array|mixed
+     */
+    public function spotlight($userId, $howMany = null, $fresh = false)
+    {
+        $this->isInt($userId, 'userId');
+
+        try {
+
+            $queryString = [];
+            if (is_numeric($howMany) and $howMany > 0) {
+                $queryString['query']['howMany'] = $howMany;
+            }
+
+            if ($fresh === true) {
+                $queryString['query']['fresh'] = '';
+            }
+
+            $response = $this->client->get('/spotlight/' . $userId, $queryString);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @param array $userIds
+     * @param null $howMany
      * @param bool|false $dither
      *
      * @return array|mixed
@@ -272,7 +420,7 @@ class Client
 
     /**
      * @param array $items
-     * @param null  $howMany
+     * @param null $howMany
      *
      * @return array|mixed
      */
@@ -327,7 +475,7 @@ class Client
             $similarities = array_filter($similarities);
 
             $results = [];
-            $index   = 0;
+            $index = 0;
             foreach ($items as $item) {
                 $results[$item] = $similarities[$index];
                 $index++;
@@ -409,8 +557,8 @@ class Client
     }
 
     /**
-     * @param array      $items
-     * @param null       $howMany
+     * @param array $items
+     * @param null $howMany
      * @param bool|false $guess
      *
      * @return array|mixed
@@ -444,19 +592,34 @@ class Client
     /**
      * @param       $userId
      * @param array $terms
-     * @param null  $howMany
-     *
+     * @param null $howMany
+     * @param bool $fresh
+     * @param bool $profileBased
+     * @param null $radius
+     * @param bool $dither
      * @return array|mixed
      */
-    public function termBasedRecommend($userId, array $terms, $howMany = null)
-    {
+    public function termBasedRecommend(
+        $userId,
+        array $terms,
+        $howMany = null,
+        $fresh = false,
+        $profileBased = false,
+        $radius = null,
+        $dither = false
+    ) {
         $this->isInt($userId);
 
-        if (empty($terms)) {
+
+        if (empty($terms) and $profileBased == false) {
             throw new InvalidArgumentException('terms is empty!');
         }
 
-        $this->validateArray($terms, 'haveString', 'terms');
+        $queryStringTerms = '';
+        if (!empty($terms)) {
+            $this->validateArray($terms, 'haveString', 'terms');
+            $queryStringTerms = implode('/', $terms);
+        }
 
         try {
 
@@ -465,7 +628,24 @@ class Client
                 $queryString['query']['howMany'] = $howMany;
             }
 
-            $response = $this->client->get('/termBasedRecommend/' . $userId . '/' . implode('/', $terms), $queryString);
+            if (is_numeric($radius) and $radius > 0) {
+                $queryString['query']['radius'] = $radius;
+            }
+
+            if ($fresh === true) {
+                $queryString['query']['fresh'] = '';
+            }
+
+            if ($profileBased === true) {
+                $queryString['query']['profileBased'] = '';
+            }
+
+            if ($dither === true) {
+                $queryString['query']['dither'] = '';
+            }
+
+
+            $response = $this->client->get('/termBasedRecommend/' . $userId . '/' . $queryStringTerms, $queryString);
             return json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
             return [];
@@ -473,8 +653,73 @@ class Client
     }
 
     /**
+     * @param $userId
      * @param array $terms
-     * @param null  $howMany
+     * @param null $howMany
+     * @param bool $fresh
+     * @param bool $profileBased
+     * @param null $radius
+     * @param bool $dither
+     * @return array|mixed
+     */
+    public function termBasedRecommendInclusive(
+        $userId,
+        array $terms,
+        $howMany = null,
+        $fresh = false,
+        $profileBased = false,
+        $radius = null,
+        $dither = false
+    ) {
+        $this->isInt($userId);
+
+
+        if (empty($terms) and $profileBased == false) {
+            throw new InvalidArgumentException('terms is empty!');
+        }
+
+        $queryStringTerms = '';
+        if (!empty($terms)) {
+            $this->validateArray($terms, 'haveString', 'terms');
+            $queryStringTerms = implode('/', $terms);
+        }
+
+        try {
+
+            $queryString = [];
+            if (is_numeric($howMany) and $howMany > 0) {
+                $queryString['query']['howMany'] = $howMany;
+            }
+
+            if (is_numeric($radius) and $radius > 0) {
+                $queryString['query']['radius'] = $radius;
+            }
+
+            if ($fresh === true) {
+                $queryString['query']['fresh'] = '';
+            }
+
+            if ($profileBased === true) {
+                $queryString['query']['profileBased'] = '';
+            }
+
+            if ($dither === true) {
+                $queryString['query']['dither'] = '';
+            }
+
+
+            $response = $this->client->get('/termBasedRecommendInclusive/' . $userId . '/' . $queryStringTerms,
+                $queryString);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return [];
+        }
+    }
+
+
+    /**
+     * @param array $terms
+     * @param null $howMany
      *
      * @return array|mixed
      */
@@ -504,11 +749,12 @@ class Client
     /**
      * @param       $item
      * @param array $terms
-     * @param null  $howMany
+     * @param null $howMany
      *
+     * @param bool $fresh
      * @return array|mixed
      */
-    public function termBasedSimilarity($item, array $terms, $howMany = null)
+    public function termBasedSimilarity($item, array $terms, $howMany = null, $fresh = false)
     {
         $this->haveString($item);
 
@@ -523,6 +769,45 @@ class Client
             $queryString = [];
             if (is_numeric($howMany) and $howMany > 0) {
                 $queryString['query']['howMany'] = $howMany;
+            }
+
+            if ($fresh === true) {
+                $queryString['query']['fresh'] = '';
+            }
+
+            $response = $this->client->get('/termBasedSimilarity/' . $item . '/' . implode('/', $terms), $queryString);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @param $item
+     * @param array $terms
+     * @param null $howMany
+     * @param bool $fresh
+     * @return array|mixed
+     */
+    public function termBasedSimilarityInclusive($item, array $terms, $howMany = null, $fresh = false)
+    {
+        $this->haveString($item);
+
+        if (empty($terms)) {
+            throw new InvalidArgumentException('terms is empty!');
+        }
+
+        $this->validateArray($terms, 'haveString', 'terms');
+
+        try {
+
+            $queryString = [];
+            if (is_numeric($howMany) and $howMany > 0) {
+                $queryString['query']['howMany'] = $howMany;
+            }
+
+            if ($fresh === true) {
+                $queryString['query']['fresh'] = '';
             }
 
             $response = $this->client->get('/termBasedSimilarity/' . $item . '/' . implode('/', $terms), $queryString);
@@ -639,6 +924,132 @@ class Client
 
         try {
             $response = $this->client->get('/currentMood/' . $userId);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @param $userId
+     * @param null $gender
+     * @param null $birthYear
+     * @param null $homeLocation
+     * @param null $workLocation
+     * @param null $currentLocation
+     * @param array $priorities
+     * @param bool $overwrite
+     * @return bool
+     */
+    public function setUserProfile(
+        $userId,
+        $gender = null,
+        $birthYear = null,
+        $homeLocation = null,
+        $workLocation = null,
+        $currentLocation = null,
+        array $priorities = [],
+        $overwrite = true
+    ) {
+
+        $this->isInt($userId);
+
+        $queryString = [];
+        if ($birthYear !== null and $birthYear > 0) {
+            $queryString['query']['birthYear'] = $birthYear;
+        }
+
+        if ($gender !== null) {
+            $queryString['query']['gender'] = $gender;
+        }
+
+        if ($overwrite === true) {
+            $queryString['query']['overwrite'] = '';
+        }
+
+        if ($homeLocation !== null) {
+            $queryString['query']['homeLocation'] = $homeLocation;
+        }
+
+        if ($workLocation !== null) {
+            $queryString['query']['workLocation'] = $workLocation;
+        }
+
+        if ($currentLocation !== null) {
+            $queryString['query']['currentLocation'] = $currentLocation;
+        }
+
+        if (!empty($priorities)) {
+            $queryString['query']['priorities'] = implode(',', $priorities);
+        }
+
+        $this->client->get('/setUserProfile/' . $userId, $queryString);
+
+        try {
+
+        } catch (ClientException $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $userId
+     * @return mixed|null
+     */
+    public function getUserProfile($userId)
+    {
+        $this->isInt($userId);
+
+        try {
+            $response = $this->client->get('/getUserProfile/' . $userId);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param $userId
+     * @return mixed|null
+     */
+    public function guessUserProfile($userId)
+    {
+        $this->isInt($userId);
+
+        try {
+            $response = $this->client->get('/guessUserProfiles/' . $userId);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param $userId
+     * @param $item
+     * @param null $howMany
+     * @param bool $fresh
+     * @return array|mixed
+     */
+    public function luckyUser($userId, $item, $howMany = null, $fresh = false)
+    {
+        $this->isInt($userId, 'userId');
+        $this->haveString($item, 'item');
+
+        try {
+
+            $queryString = [];
+            if (is_numeric($howMany) and $howMany > 0) {
+                $queryString['query']['howMany'] = $howMany;
+            }
+
+            if ($fresh === true) {
+                $queryString['query']['dither'] = '';
+            }
+
+            $response = $this->client->get('/luckyUser/' . $userId . '/' . $item, $queryString);
             return json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
             return [];

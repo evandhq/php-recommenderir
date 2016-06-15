@@ -27,7 +27,12 @@ $client->ingest(12345, 'product1', 200);
 * addTerms
 * removeTerms
 * termsList
+* itemLocationAdd
+* itemLocationList
 * recommend
+* termRecommend
+* spectrometer
+* spotlight
 * recommendToGroup
 * similarity
 * similarityToItem
@@ -36,13 +41,19 @@ $client->ingest(12345, 'product1', 200);
 * termMostPopularItems
 * termSimilarity
 * termBasedRecommend
+* termBasedRecommendInclusive
 * termBasedMostPopularItems
 * termBasedSimilarity
+* termBasedSimilarityInclusive
 * termNeighborhood
 * latestTouchedItems
 * latestTouchedTerms
 * userFrequentlyTouchedItems
 * itemFrequentlyVisitors
 * currentMood
+* setUserProfile
+* getUserProfile
+* guessUserProfile
+* luckyUser
 
 Feel free to open an issue and send a pull request. 
