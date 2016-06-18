@@ -277,9 +277,10 @@ class Client
      * @param null $howMany
      * @param bool|false $dither
      *
+     * @param null $radius
      * @return array|mixed
      */
-    public function recommend($userId, $howMany = null, $dither = false)
+    public function recommend($userId, $howMany = null, $dither = false, $radius = null)
     {
         $this->isInt($userId, 'userId');
 
@@ -292,6 +293,10 @@ class Client
 
             if ($dither === true) {
                 $queryString['query']['dither'] = '';
+            }
+
+            if (is_numeric($radius) and $radius > 0) {
+                $queryString['query']['radius'] = $radius;
             }
 
             $response = $this->client->get('/recommend/' . $userId, $queryString);
@@ -952,7 +957,7 @@ class Client
         $overwrite = true
     ) {
         try {
-            $this->isInt($userId);
+            $this->isInt($userId, 'userId');
 
             $queryString = [];
             if ($birthYear !== null and $birthYear > 0) {
