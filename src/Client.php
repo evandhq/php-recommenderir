@@ -951,42 +951,39 @@ class Client
         array $priorities = [],
         $overwrite = true
     ) {
-
-        $this->isInt($userId);
-
-        $queryString = [];
-        if ($birthYear !== null and $birthYear > 0) {
-            $queryString['query']['birthYear'] = $birthYear;
-        }
-
-        if ($gender !== null) {
-            $queryString['query']['gender'] = $gender;
-        }
-
-        if ($overwrite === true) {
-            $queryString['query']['overwrite'] = '';
-        }
-
-        if ($homeLocation !== null) {
-            $queryString['query']['homeLocation'] = $homeLocation;
-        }
-
-        if ($workLocation !== null) {
-            $queryString['query']['workLocation'] = $workLocation;
-        }
-
-        if ($currentLocation !== null) {
-            $queryString['query']['currentLocation'] = $currentLocation;
-        }
-
-        if (!empty($priorities)) {
-            $queryString['query']['priorities'] = implode(',', $priorities);
-        }
-
-        $this->client->get('/setUserProfile/' . $userId, $queryString);
-
         try {
+            $this->isInt($userId);
 
+            $queryString = [];
+            if ($birthYear !== null and $birthYear > 0) {
+                $queryString['query']['birthYear'] = $birthYear;
+            }
+
+            if ($gender !== null) {
+                $queryString['query']['gender'] = $gender;
+            }
+
+            if ($overwrite === true) {
+                $queryString['query']['overwrite'] = '';
+            }
+
+            if ($homeLocation !== null) {
+                $queryString['query']['homeLocation'] = $homeLocation;
+            }
+
+            if ($workLocation !== null) {
+                $queryString['query']['workLocation'] = $workLocation;
+            }
+
+            if ($currentLocation !== null) {
+                $queryString['query']['currentLocation'] = $currentLocation;
+            }
+
+            if (!empty($priorities)) {
+                $queryString['query']['priorities'] = implode(',', $priorities);
+            }
+
+            $this->client->get('/setUserProfile/' . $userId, $queryString);
         } catch (ClientException $e) {
             return false;
         }
