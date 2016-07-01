@@ -612,7 +612,8 @@ class Client
         $profileBased = false,
         $radius = null,
         $dither = false
-    ) {
+    )
+    {
         $this->isInt($userId);
 
 
@@ -675,7 +676,8 @@ class Client
         $profileBased = false,
         $radius = null,
         $dither = false
-    ) {
+    )
+    {
         $this->isInt($userId);
 
 
@@ -955,7 +957,8 @@ class Client
         $currentLocation = null,
         array $priorities = [],
         $overwrite = true
-    ) {
+    )
+    {
         try {
             $this->isInt($userId, 'userId');
 
@@ -1066,10 +1069,13 @@ class Client
     public function getTrends($frequency)
     {
         try {
+            if (!in_array($frequency, ['trendMediumTime', 'trendShortTime', 'trendLongTime'])) {
+                throw new InvalidArgumentException;
+            }
             $response = $this->client->get("/{$frequency}");
             return json_decode($response->getBody());
-        }catch (InvalidArgumentException $e) {
-        return [];
+        } catch (ClientException $e) {
+            return [];
         }
     }
 }
