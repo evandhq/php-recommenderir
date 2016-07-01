@@ -1065,8 +1065,11 @@ class Client
 
     public function getTrends($frequency)
     {
-        $response =  $this->client->get("/{$frequency}");
-        return json_decode($response->getBody());
-
+        try {
+            $response = $this->client->get("/{$frequency}");
+            return json_decode($response->getBody());
+        }catch (InvalidArgumentException $e) {
+        return [];
+        }
     }
 }
