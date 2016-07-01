@@ -1057,4 +1057,19 @@ class Client
             return [];
         }
     }
+
+    /**
+     * @param $frequency
+     * @return mixed
+     */
+
+    public function getTrends($frequency)
+    {
+        try {
+            $response = $this->client->get("/{$frequency}");
+            return json_decode($response->getBody());
+        }catch (InvalidArgumentException $e) {
+        return [];
+        }
+    }
 }

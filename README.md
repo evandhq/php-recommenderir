@@ -55,5 +55,6 @@ $client->ingest(12345, 'product1', 200);
 * getUserProfile
 * guessUserProfile
 * luckyUser
+* getTrends
 
 Feel free to open an issue and send a pull request. 
