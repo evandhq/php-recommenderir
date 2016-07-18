@@ -3,7 +3,7 @@ A simple Object Oriented wrapper for [Recommender.ir](http://recommender.ir/) AP
 
 ## Installation
 ```
-compsoer require evandhq/php-recommenderir
+composer require evandhq/php-recommenderir
 ```
 or add this line to your composer.json file
 ```
