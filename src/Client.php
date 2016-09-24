@@ -1069,7 +1069,7 @@ class Client
     public function getTrends($frequency)
     {
         try {
-            if (!in_array($frequency, ['trendMediumTime', 'trendShortTime', 'trendLongTime'])) {
+            if (!in_array($frequency, ['trendMidTime', 'trendShortTime', 'trendLongTime'])) {
                 throw new InvalidArgumentException;
             }
             $response = $this->client->get("/{$frequency}");
