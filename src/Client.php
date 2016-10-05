@@ -423,6 +423,36 @@ class Client
         }
     }
 
+
+    /**
+     * @param array $items
+     * @param null $howMany
+     * @return array|mixed
+     */
+    public function recommendToNewcomer(array $items, $howMany = null)
+    {
+        if (empty($items)) {
+            throw new InvalidArgumentException('items is empty!');
+        }
+
+        $this->validateArray($items, 'haveString', 'items');
+
+        try {
+
+            $queryString = [];
+            if (is_numeric($howMany) and $howMany > 0) {
+                $queryString['query']['howMany'] = $howMany;
+            }
+
+            $response = $this->client->get('/recommendToNewcomer/' . implode('/', $items), $queryString);
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return [];
+        }
+    }
+
+
+
     /**
      * @param array $items
      * @param null $howMany
@@ -1065,7 +1095,6 @@ class Client
      * @param $frequency
      * @return mixed
      */
-
     public function getTrends($frequency)
     {
         try {
