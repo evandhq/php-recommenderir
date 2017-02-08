@@ -452,7 +452,6 @@ class Client
     }
 
 
-
     /**
      * @param array $items
      * @param null $howMany
@@ -1093,15 +1092,22 @@ class Client
 
     /**
      * @param $frequency
+     * @param null $howMany
      * @return mixed
      */
-    public function getTrends($frequency)
+    public function getTrends($frequency = 'trendMidTime', $howMany = null)
     {
         try {
             if (!in_array($frequency, ['trendMidTime', 'trendShortTime', 'trendLongTime'])) {
                 throw new InvalidArgumentException;
             }
-            $response = $this->client->get("/{$frequency}");
+
+            $queryString = [];
+            if (is_numeric($howMany) and $howMany > 0) {
+                $queryString['query']['howMany'] = $howMany;
+            }
+
+            $response = $this->client->get("/{$frequency}", $queryString);
             return json_decode($response->getBody());
         } catch (ClientException $e) {
             return [];
