@@ -1132,4 +1132,22 @@ class Client
             return [];
         }
     }
+
+    /**
+     * @param $user_id
+     * @param array $items
+     * @return array|mixed
+     */
+    public function sort($user_id, array $items)
+    {
+        $this->isInt($user_id, 'userId');
+        $this->validateArray($items, 'haveString');
+
+        try {
+            $response = $this->client->get('/genericSort/interest/'. "{$user_id}/". implode('/', $items));
+            return json_decode($response->getBody());
+        } catch (ClientException $e) {
+            return [];
+        }
+    }
 }
